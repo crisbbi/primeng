@@ -112,7 +112,7 @@ describe('Dropdown', () => {
         dropdown = fixture.componentInstance;
     });
 
-    it('should set placeholder to "Select a City" after change detection', () => {
+    it('should set dropdown placeholder to "Select a City" when wrapped inside a float label', () => {
         floatLabelDropdownFixture.detectChanges();
 
         expect(floatLabelDropdown.placeholder()).toEqual('Select a City');
