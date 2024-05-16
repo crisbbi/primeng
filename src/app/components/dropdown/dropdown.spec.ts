@@ -72,26 +72,53 @@ class TestDropdownComponent {
         this.selectedCity = { name: 'New York', code: 'NY' };
     }
 }
+
+@Component({
+    template: `
+        <p-floatLabel>
+            <p-dropdown [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" inputId="float-label" />
+            <label for="float-label">Select a City</label>
+        </p-floatLabel>
+    `
+})
+class FloatingLabelTestDropdownComponent {
+    selectedCity: any;
+
+    cities = [
+        { name: 'New York', code: 'NY' },
+        { name: 'Rome', code: 'RM' }
+    ];
+}
 describe('Dropdown', () => {
     let dropdown: Dropdown;
     let testDropdown: Dropdown;
     let groupDropdown: Dropdown;
     let alternateGroupDropdown: Dropdown;
+    let floatLabelDropdown: FloatingLabelTestDropdownComponent;
     let fixture: ComponentFixture<Dropdown>;
     let groupFixture: ComponentFixture<TestDropdownComponent>;
+    let floatLabelDropdownFixture: ComponentFixture<FloatingLabelTestDropdownComponent>;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [NoopAnimationsModule, FormsModule, ScrollingModule, TooltipModule, OverlayModule, ChevronDownIcon, SearchIcon, TimesIcon],
-            declarations: [Dropdown, DropdownItem, TestDropdownComponent]
+            declarations: [Dropdown, DropdownItem, TestDropdownComponent, FloatingLabelTestDropdownComponent]
         }).compileComponents();
 
         fixture = TestBed.createComponent(Dropdown);
         groupFixture = TestBed.createComponent(TestDropdownComponent);
+        floatLabelDropdownFixture = TestBed.createComponent(FloatingLabelTestDropdownComponent);
         groupDropdown = groupFixture.debugElement.children[0].componentInstance;
         testDropdown = groupFixture.debugElement.children[1].componentInstance;
         alternateGroupDropdown = groupFixture.debugElement.children[3].componentInstance;
         dropdown = fixture.componentInstance;
+    });
+
+    it('should set placeholder to "Select a City" after change detection', () => {
+        floatLabelDropdownFixture.detectChanges();
+
+        const placeholder = floatLabelDropdownFixture.nativeElement.querySelector('label').textContent;
+        expect(placeholder).toEqual('Select a City');
     });
 
     it('should disable', () => {
