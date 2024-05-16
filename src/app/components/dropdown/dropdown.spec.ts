@@ -112,12 +112,6 @@ describe('Dropdown', () => {
         dropdown = fixture.componentInstance;
     });
 
-    it('should set dropdown placeholder to "Select a City" when wrapped inside a float label', () => {
-        floatLabelDropdownFixture.detectChanges();
-
-        expect(floatLabelDropdown.placeholder()).toEqual('Select a City');
-    });
-
     it('should disable', () => {
         fixture.componentInstance.disabled = true;
         fixture.componentInstance.editable = true;
@@ -555,4 +549,10 @@ describe('Dropdown', () => {
             expect(dropdown.filled()).toBeFalsy();
         })
     );
+
+    it('should set dropdown placeholder to "Select a City" when wrapped inside a float label', () => {
+        floatLabelDropdownFixture.detectChanges();
+
+        expect(floatLabelDropdown.placeholder()).toEqual('Select a City');
+    });
 });
