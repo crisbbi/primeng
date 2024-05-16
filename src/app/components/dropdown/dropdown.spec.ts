@@ -77,19 +77,15 @@ class TestDropdownComponent {
 @Component({
     template: `
         <p-floatLabel>
-            <p-dropdown [options]="cities" [(ngModel)]="selectedCity" optionLabel="name" inputId="float-label" />
+            <p-dropdown [options]="cities" inputId="float-label" />
             <label for="float-label">Select a City</label>
         </p-floatLabel>
     `
 })
-class FloatingLabelTestDropdownComponent {
-    selectedCity: any;
-
-    cities = [
-        { name: 'New York', code: 'NY' },
-        { name: 'Rome', code: 'RM' }
-    ];
+class FloatingLabelTestDropdownComponent extends Dropdown {
+    cities = [{ name: 'New York', code: 'NY' }];
 }
+
 describe('Dropdown', () => {
     let dropdown: Dropdown;
     let testDropdown: Dropdown;
@@ -112,14 +108,14 @@ describe('Dropdown', () => {
         groupDropdown = groupFixture.debugElement.children[0].componentInstance;
         testDropdown = groupFixture.debugElement.children[1].componentInstance;
         alternateGroupDropdown = groupFixture.debugElement.children[3].componentInstance;
+        floatLabelDropdown = floatLabelDropdownFixture.debugElement.query(By.css('p-floatLabel p-dropdown')).componentInstance;
         dropdown = fixture.componentInstance;
     });
 
     it('should set placeholder to "Select a City" after change detection', () => {
         floatLabelDropdownFixture.detectChanges();
 
-        const placeholder = floatLabelDropdownFixture.nativeElement.querySelector('label').textContent;
-        expect(placeholder).toEqual('Select a City');
+        expect(floatLabelDropdown.placeholder()).toEqual('Select a City');
     });
 
     it('should disable', () => {
