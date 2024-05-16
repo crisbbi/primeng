@@ -10,6 +10,7 @@ import { OverlayModule } from 'primeng/overlay';
 import { ChevronDownIcon } from 'primeng/icons/chevrondown';
 import { SearchIcon } from 'primeng/icons/search';
 import { TimesIcon } from 'primeng/icons/times';
+import { FloatLabelModule } from '../floatlabel/floatlabel';
 
 @Component({
     template: `
@@ -101,7 +102,7 @@ describe('Dropdown', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [NoopAnimationsModule, FormsModule, ScrollingModule, TooltipModule, OverlayModule, ChevronDownIcon, SearchIcon, TimesIcon],
+            imports: [NoopAnimationsModule, FormsModule, ScrollingModule, TooltipModule, OverlayModule, ChevronDownIcon, SearchIcon, TimesIcon, FloatLabelModule],
             declarations: [Dropdown, DropdownItem, TestDropdownComponent, FloatingLabelTestDropdownComponent]
         }).compileComponents();
 
