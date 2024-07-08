@@ -1849,7 +1849,7 @@ export class Table implements OnInit, AfterViewInit, AfterContentInit, Blockable
         }
     }
 
-    selectRange(event: MouseEvent | KeyboardEvent, rowIndex: number) {
+    selectRange(event: MouseEvent | KeyboardEvent, rowIndex: number, isMetaKeySelection?: boolean | undefined) {
         let rangeStart, rangeEnd;
 
         if (<number>this.anchorRowIndex > rowIndex) {
@@ -1871,7 +1871,7 @@ export class Table implements OnInit, AfterViewInit, AfterContentInit, Blockable
         let rangeRowsData = [];
         for (let i = <number>rangeStart; i <= <number>rangeEnd; i++) {
             let rangeRowData = this.filteredValue ? this.filteredValue[i] : this.value[i];
-            if (!this.isSelected(rangeRowData)) {
+            if (!this.isSelected(rangeRowData) && !isMetaKeySelection) {
                 if (!this.isRowSelectable(rangeRowData, rowIndex)) {
                     continue;
                 }
@@ -2974,8 +2974,8 @@ export class Table implements OnInit, AfterViewInit, AfterContentInit, Blockable
     createStyleElement() {
         this.styleElement = this.renderer.createElement('style');
         this.styleElement.type = 'text/css';
-        this.renderer.appendChild(this.document.head, this.styleElement);
         DomHandler.setAttribute(this.styleElement, 'nonce', this.config?.csp()?.nonce);
+        this.renderer.appendChild(this.document.head, this.styleElement);
     }
 
     getGroupRowsMeta() {
@@ -2987,6 +2987,7 @@ export class Table implements OnInit, AfterViewInit, AfterContentInit, Blockable
             if (!this.responsiveStyleElement) {
                 this.responsiveStyleElement = this.renderer.createElement('style');
                 this.responsiveStyleElement.type = 'text/css';
+                DomHandler.setAttribute(this.responsiveStyleElement, 'nonce', this.config?.csp()?.nonce);
                 this.renderer.appendChild(this.document.head, this.responsiveStyleElement);
 
                 let innerHTML = `
@@ -3632,7 +3633,7 @@ export class SelectableRow implements OnInit, OnDestroy {
                 if (event.code === 'KeyA' && (event.metaKey || event.ctrlKey) && this.dt.selectionMode === 'multiple') {
                     const data = this.dt.dataToRender(this.dt.processedData);
                     this.dt.selection = [...data];
-                    this.dt.selectRange(event, data.length - 1);
+                    this.dt.selectRange(event, data.length - 1, true);
 
                     event.preventDefault();
                 }
@@ -5395,8 +5396,6 @@ export class ColumnFilter implements AfterContentInit {
 
     overlayId: any;
 
-    applyHasBeenClicked: boolean = false;
-
     get fieldConstraints(): FilterMetadata[] | undefined | null {
         return this.dt.filters ? <FilterMetadata[]>this.dt.filters[<string>this.field] : null;
     }
@@ -5651,11 +5650,6 @@ export class ColumnFilter implements AfterContentInit {
     }
 
     onEscape() {
-        if (this.hasFilterNotBeenApplied()) {
-            this.clearFilter();
-        }
-        this.applyHasBeenClicked = false;
-        this.overlayVisible = false;
         this.icon?.nativeElement.focus();
     }
 
@@ -5755,10 +5749,6 @@ export class ColumnFilter implements AfterContentInit {
         return false;
     }
 
-    hasFilterNotBeenApplied(): boolean {
-        return this.hasFilter() && !this.applyHasBeenClicked;
-    }
-
     isOutsideClicked(event: any): boolean {
         return !(
             DomHandler.hasClass(this.overlay?.nextElementSibling, 'p-overlay') ||
@@ -5833,10 +5823,6 @@ export class ColumnFilter implements AfterContentInit {
     }
 
     hide() {
-        if (this.hasFilterNotBeenApplied()) {
-            this.clearFilter();
-        }
-        this.applyHasBeenClicked = false;
         this.overlayVisible = false;
         this.cd.markForCheck();
     }
@@ -5849,14 +5835,12 @@ export class ColumnFilter implements AfterContentInit {
     }
 
     clearFilter() {
-        this.applyHasBeenClicked = false;
         this.initFieldFilterConstraint();
         this.dt._filter();
         if (this.hideOnClear) this.hide();
     }
 
     applyFilter() {
-        this.applyHasBeenClicked = true;
         this.dt._filter();
         this.hide();
     }
